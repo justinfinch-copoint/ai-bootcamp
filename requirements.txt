@@ -1,0 +1,27 @@
+# Core Azure AI packages
+azure-ai-projects
+azure-identity
+azure-ai-inference
+agent-framework --pre
+
+# Observability and tracing
+opentelemetry-sdk
+opentelemetry-api
+azure-core-tracing-opentelemetry
+
+# Vector database
+chromadb
+
+# UI Framework
+streamlit
+
+# Document processing
+pypdf
+
+# Utilities
+python-dotenv
+
+# Jupyter (for notebooks if needed in future lessons)
+jupyter
+ipykernel
+notebook
