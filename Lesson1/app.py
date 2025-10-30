@@ -17,10 +17,6 @@ from chromadb.config import Settings
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-# Load environment variables from .env file
-env_path = Path(__file__).parent / '.env'
-load_dotenv(dotenv_path=env_path)
-
 # Configuration
 CHROMA_DB_PATH = "chroma_db"
 COLLECTION_NAME = "ai_course_docs"
