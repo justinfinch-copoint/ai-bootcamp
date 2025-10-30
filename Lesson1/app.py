@@ -22,7 +22,7 @@ env_path = Path(__file__).parent / '.env'
 load_dotenv(dotenv_path=env_path)
 
 # Configuration
-CHROMA_DB_PATH = "Lesson1/chroma_db"
+CHROMA_DB_PATH = "chroma_db"
 COLLECTION_NAME = "ai_course_docs"
 EMBEDDING_MODEL = "text-embedding-3-small"
 CHAT_MODEL = "gpt-35-turbo"  # Azure deployment name
@@ -36,7 +36,8 @@ st.set_page_config(
 )
 
 st.title("🤖 AI Course Q&A Chatbot")
-st.caption("Ask me anything about the AI training course! (Powered by Azure AI Foundry)")
+st.caption(
+    "Ask me anything about the AI training course! (Powered by Azure AI Foundry)")
 
 
 @st.cache_resource
@@ -66,7 +67,8 @@ def load_chroma_db():
     """Load the ChromaDB vector store."""
     if not os.path.exists(CHROMA_DB_PATH):
         st.error(f"❌ Vector database not found at {CHROMA_DB_PATH}")
-        st.info("Please run `python Lesson1/build_vectordb.py` first to build the vector database.")
+        st.info(
+            "Please run `python Lesson1/build_vectordb.py` first to build the vector database.")
         st.stop()
 
     try:
@@ -164,10 +166,12 @@ if prompt := st.chat_input("Ask a question about the AI course..."):
         with st.spinner("Thinking..."):
             try:
                 # Retrieve relevant context
-                context_docs = retrieve_context(collection, prompt, project_client, TOP_K_RESULTS)
+                context_docs = retrieve_context(
+                    collection, prompt, project_client, TOP_K_RESULTS)
 
                 # Generate answer
-                answer = generate_response(project_client, prompt, context_docs)
+                answer = generate_response(
+                    project_client, prompt, context_docs)
 
                 # Display answer
                 st.markdown(answer)
@@ -183,12 +187,14 @@ if prompt := st.chat_input("Ask a question about the AI course..."):
                             st.divider()
 
                 # Add assistant response to chat history
-                st.session_state.messages.append({"role": "assistant", "content": answer})
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": answer})
 
             except Exception as e:
                 error_msg = f"❌ Error generating response: {str(e)}"
                 st.error(error_msg)
-                st.session_state.messages.append({"role": "assistant", "content": error_msg})
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": error_msg})
 
 # Sidebar with information
 with st.sidebar:
