@@ -10,6 +10,7 @@ This script helps you understand:
 This network won't be trained yet - that comes in Phase 3!
 """
 
+from matplotlib.patches import Patch
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -99,14 +100,16 @@ print("    " + "─" * 50)
 print("\n[2] Counting network parameters...")
 
 total_params = sum(p.numel() for p in model.parameters())
-trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+trainable_params = sum(p.numel()
+                       for p in model.parameters() if p.requires_grad)
 
 print(f"\n    Total parameters: {total_params:,}")
 print(f"    Trainable parameters: {trainable_params:,}")
 print("\n    Breakdown by layer:")
 
 for name, param in model.named_parameters():
-    print(f"      • {name:15s}: {param.numel():>7,} parameters, shape {tuple(param.shape)}")
+    print(
+        f"      • {name:15s}: {param.numel():>7,} parameters, shape {tuple(param.shape)}")
 
 print("\n    💡 These parameters (weights and biases) are what the")
 print("       network will learn during training!")
@@ -126,7 +129,7 @@ for x, size, label in zip(x_positions, layer_sizes, layers):
     # Rectangle height proportional to layer size (with scaling)
     height = min(size / 100, 8)  # Cap height for visualization
     rect = plt.Rectangle((x - 0.1, -height/2), 0.2, height,
-                          facecolor='lightblue', edgecolor='black', linewidth=2)
+                         facecolor='lightblue', edgecolor='black', linewidth=2)
     ax.add_patch(rect)
 
     # Label
@@ -168,8 +171,9 @@ ax.set_title('Simple Neural Network Architecture\nTotal: 101,770 Parameters',
              fontsize=14, fontweight='bold', pad=20)
 
 plt.tight_layout()
-plt.savefig('MNIST/visualizations/network_architecture.png', dpi=150, bbox_inches='tight')
-print("    ✓ Saved: MNIST/visualizations/network_architecture.png")
+plt.savefig('visualizations/network_architecture.png',
+            dpi=150, bbox_inches='tight')
+print("    ✓ Saved: visualizations/network_architecture.png")
 
 # Step 4: Load a sample image and make a prediction
 print("\n[4] Making a prediction (before training)...")
@@ -239,7 +243,6 @@ axes[1].set_xlim(0, 100)
 axes[1].grid(axis='x', alpha=0.3)
 
 # Add legend
-from matplotlib.patches import Patch
 legend_elements = [
     Patch(facecolor='green', alpha=0.7, label='True Label'),
     Patch(facecolor='red', alpha=0.7, label='Wrong Prediction'),
@@ -248,8 +251,9 @@ legend_elements = [
 axes[1].legend(handles=legend_elements, loc='lower right')
 
 plt.tight_layout()
-plt.savefig('MNIST/visualizations/untrained_prediction.png', dpi=150, bbox_inches='tight')
-print("\n    ✓ Saved: MNIST/visualizations/untrained_prediction.png")
+plt.savefig('visualizations/untrained_prediction.png',
+            dpi=150, bbox_inches='tight')
+print("\n    ✓ Saved: visualizations/untrained_prediction.png")
 
 # Step 5: Examine the weights
 print("\n[5] Looking at initial weights...")
@@ -257,7 +261,8 @@ print("\n[5] Looking at initial weights...")
 # Get weights from first layer
 first_layer_weights = model.fc1.weight.data  # Shape: (128, 784)
 
-print(f"    • First layer weight matrix shape: {tuple(first_layer_weights.shape)}")
+print(
+    f"    • First layer weight matrix shape: {tuple(first_layer_weights.shape)}")
 print(f"    • This means: 128 neurons, each looking at 784 pixels")
 print(f"\n    • Weight statistics:")
 print(f"      - Mean: {first_layer_weights.mean().item():.6f}")
@@ -284,8 +289,8 @@ for idx in range(10):
 
 plt.colorbar(im, ax=axes.ravel().tolist(), fraction=0.046, pad=0.04)
 plt.tight_layout()
-plt.savefig('MNIST/visualizations/initial_weights.png', dpi=150, bbox_inches='tight')
-print("\n    ✓ Saved: MNIST/visualizations/initial_weights.png")
+plt.savefig('visualizations/initial_weights.png', dpi=150, bbox_inches='tight')
+print("\n    ✓ Saved: visualizations/initial_weights.png")
 
 print("\n    💡 These weights are randomly initialized. They don't")
 print("       detect any meaningful patterns yet. After training,")
