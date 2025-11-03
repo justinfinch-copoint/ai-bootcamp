@@ -29,7 +29,23 @@ python 03_train_model.py
 python 04_improved_model.py
 ```
 
-### 3. Read the Learning Plan
+### 3. Test Your Trained Model (Interactive Web App)
+
+After completing Phase 3 (training), you can test your model interactively:
+
+```bash
+streamlit run app.py
+```
+
+This launches a web application where you can:
+- Draw digits (0-9) on a canvas with your mouse
+- Get real-time predictions from your trained model
+- See confidence scores and probabilities for all digits
+- View how your drawing is preprocessed to 28×28 pixels
+
+The app will automatically load your trained model from `models/simple_nn_trained.pth`.
+
+### 4. Read the Learning Plan
 
 For detailed explanations of concepts, theory, and next steps, read:
 - **[learning_plan.md](learning_plan.md)** - Your comprehensive guide
@@ -45,6 +61,7 @@ MNIST/
 ├── 02_simple_nn.py            # Phase 2: First neural network
 ├── 03_train_model.py          # Phase 3: Training
 ├── 04_improved_model.py       # Phase 5: CNN implementation
+├── app.py                     # Interactive web app for testing models
 ├── models/                    # Saved trained models
 ├── visualizations/            # Generated plots and images
 └── data/                      # MNIST dataset (auto-downloaded)
@@ -79,6 +96,7 @@ MNIST/
    - Data loading and preprocessing
    - Model training and evaluation
    - Visualization and interpretation
+   - Deploying models to interactive web applications
 
 ## Tips for Success
 
