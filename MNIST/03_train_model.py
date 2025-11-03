@@ -12,6 +12,7 @@ This is where the magic happens - watch your network go from random
 guessing to 97-98% accuracy!
 """
 
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -55,7 +56,8 @@ class SimpleNN(nn.Module):
 
 
 model = SimpleNN().to(device)
-print(f"    ✓ Network created with {sum(p.numel() for p in model.parameters()):,} parameters")
+print(
+    f"    ✓ Network created with {sum(p.numel() for p in model.parameters()):,} parameters")
 
 # Step 3: Prepare the data
 print("\n[3] Preparing datasets...")
@@ -77,7 +79,8 @@ test_dataset = datasets.MNIST(root='./data', train=False,
 train_size = int(0.9 * len(train_dataset))  # 90% for training
 val_size = len(train_dataset) - train_size  # 10% for validation
 
-train_dataset, val_dataset = random_split(train_dataset, [train_size, val_size])
+train_dataset, val_dataset = random_split(
+    train_dataset, [train_size, val_size])
 
 print(f"    • Training samples: {len(train_dataset):,}")
 print(f"    • Validation samples: {len(val_dataset):,}")
@@ -254,8 +257,10 @@ ax1.legend()
 ax1.grid(True, alpha=0.3)
 
 # Plot accuracies
-ax2.plot(epochs, train_accuracies, 'b-', label='Training Accuracy', linewidth=2)
-ax2.plot(epochs, val_accuracies, 'r-', label='Validation Accuracy', linewidth=2)
+ax2.plot(epochs, train_accuracies, 'b-',
+         label='Training Accuracy', linewidth=2)
+ax2.plot(epochs, val_accuracies, 'r-',
+         label='Validation Accuracy', linewidth=2)
 ax2.set_xlabel('Epoch', fontsize=12)
 ax2.set_ylabel('Accuracy (%)', fontsize=12)
 ax2.set_title('Accuracy Over Time', fontsize=12)
@@ -264,7 +269,8 @@ ax2.grid(True, alpha=0.3)
 ax2.set_ylim([0, 100])
 
 plt.tight_layout()
-plt.savefig('MNIST/visualizations/training_progress.png', dpi=150, bbox_inches='tight')
+plt.savefig('visualizations/training_progress.png',
+            dpi=150, bbox_inches='tight')
 print("    ✓ Saved: MNIST/visualizations/training_progress.png")
 
 # Step 7: Final evaluation on test set
@@ -288,15 +294,14 @@ print(f"\n    Test Accuracy: {test_accuracy:.2f}%")
 # Step 8: Save the trained model
 print("\n[8] Saving the trained model...")
 
-import os
-os.makedirs('MNIST/models', exist_ok=True)
+os.makedirs('models', exist_ok=True)
 
 torch.save({
     'epoch': num_epochs,
     'model_state_dict': model.state_dict(),
     'optimizer_state_dict': optimizer.state_dict(),
     'test_accuracy': test_accuracy,
-}, 'MNIST/models/simple_nn_trained.pth')
+}, 'models/simple_nn_trained.pth')
 
 print("    ✓ Saved: MNIST/models/simple_nn_trained.pth")
 
@@ -321,7 +326,8 @@ probabilities = probabilities.cpu()
 
 # Plot first 10 predictions
 fig, axes = plt.subplots(2, 5, figsize=(14, 6))
-fig.suptitle('Sample Predictions from Trained Model', fontsize=14, fontweight='bold')
+fig.suptitle('Sample Predictions from Trained Model',
+             fontsize=14, fontweight='bold')
 
 for idx in range(10):
     row = idx // 5
@@ -347,7 +353,8 @@ for idx in range(10):
     ax.axis('off')
 
 plt.tight_layout()
-plt.savefig('MNIST/visualizations/sample_predictions.png', dpi=150, bbox_inches='tight')
+plt.savefig('visualizations/sample_predictions.png',
+            dpi=150, bbox_inches='tight')
 print("    ✓ Saved: MNIST/visualizations/sample_predictions.png")
 
 # Step 10: Analyze mistakes
@@ -379,7 +386,8 @@ print(f"    Error rate: {len(mistakes)/len(test_dataset)*100:.2f}%")
 # Show some mistakes
 if len(mistakes) > 0:
     fig, axes = plt.subplots(2, 5, figsize=(14, 6))
-    fig.suptitle('Sample Mistakes - Can You See Why?', fontsize=14, fontweight='bold')
+    fig.suptitle('Sample Mistakes - Can You See Why?',
+                 fontsize=14, fontweight='bold')
 
     for idx in range(min(10, len(mistakes))):
         row = idx // 5
@@ -394,7 +402,7 @@ if len(mistakes) > 0:
         ax.axis('off')
 
     plt.tight_layout()
-    plt.savefig('MNIST/visualizations/mistakes.png', dpi=150, bbox_inches='tight')
+    plt.savefig('visualizations/mistakes.png', dpi=150, bbox_inches='tight')
     print("    ✓ Saved: MNIST/visualizations/mistakes.png")
 
 # Confusion analysis
@@ -405,7 +413,7 @@ for m in mistakes:
 
 print("\n    Most common confusions:")
 for (true, pred), count in sorted(confusion_pairs.items(),
-                                   key=lambda x: x[1], reverse=True)[:5]:
+                                  key=lambda x: x[1], reverse=True)[:5]:
     print(f"      {true} misclassified as {pred}: {count} times")
 
 # Summary

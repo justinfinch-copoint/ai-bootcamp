@@ -59,6 +59,8 @@ dmypy.json
 # MNIST
 MNIST/data/
 MNIST/visualizations/
+MNIST/models/
+
 
 # ChromaDB / Vector databases
 chroma_db/
