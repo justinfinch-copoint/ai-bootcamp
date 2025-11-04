@@ -11,6 +11,8 @@ This script helps you understand:
 This is the modern approach to image classification!
 """
 
+import os
+import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -81,7 +83,8 @@ class CNN(nn.Module):
         # Fully connected layers
         # After two poolings: 28→14→7, with 64 channels: 7×7×64 = 3,136
         self.fc1 = nn.Linear(7 * 7 * 64, 128)
-        self.dropout = nn.Dropout(0.5)  # Randomly drop 50% of neurons during training
+        # Randomly drop 50% of neurons during training
+        self.dropout = nn.Dropout(0.5)
         self.fc2 = nn.Linear(128, 10)
 
     def forward(self, x):
@@ -117,7 +120,8 @@ simple_nn_params = 101_770  # From Phase 2
 print(f"\n    💡 Comparison:")
 print(f"       Simple NN: {simple_nn_params:,} parameters")
 print(f"       CNN: {total_params:,} parameters")
-print(f"       Difference: {total_params - simple_nn_params:,} more parameters")
+print(
+    f"       Difference: {total_params - simple_nn_params:,} more parameters")
 print(f"       But CNNs are more efficient for images!")
 
 # Step 2: Prepare data with augmentation
@@ -144,7 +148,8 @@ test_dataset = datasets.MNIST(root='./data', train=False,
 # Split training data
 train_size = int(0.9 * len(train_dataset))
 val_size = len(train_dataset) - train_size
-train_dataset, val_dataset = random_split(train_dataset, [train_size, val_size])
+train_dataset, val_dataset = random_split(
+    train_dataset, [train_size, val_size])
 
 # Data loaders
 batch_size = 64
@@ -164,7 +169,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Learning rate scheduler: reduce LR when progress plateaus
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer, mode='min', factor=0.5, patience=2, verbose=True
+    optimizer, mode='min', factor=0.5, patience=2
 )
 
 print("    ✓ Using Adam optimizer with learning rate scheduling")
@@ -188,7 +193,7 @@ def train_epoch(epoch):
 
     pbar = tqdm(train_loader, desc=f'Epoch {epoch}/{num_epochs} [Train]')
 
-    for images, labels in pbar:
+    for batch_idx, (images, labels) in enumerate(pbar, 1):
         images, labels = images.to(device), labels.to(device)
 
         optimizer.zero_grad()
@@ -203,7 +208,7 @@ def train_epoch(epoch):
         correct += predicted.eq(labels).sum().item()
 
         pbar.set_postfix({
-            'loss': f'{running_loss/(pbar.n):.4f}',
+            'loss': f'{running_loss/batch_idx:.4f}',
             'acc': f'{100.*correct/total:.2f}%'
         })
 
@@ -219,7 +224,7 @@ def validate(epoch):
     pbar = tqdm(val_loader, desc=f'Epoch {epoch}/{num_epochs} [Val]  ')
 
     with torch.no_grad():
-        for images, labels in pbar:
+        for batch_idx, (images, labels) in enumerate(pbar, 1):
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             loss = criterion(outputs, labels)
@@ -230,7 +235,7 @@ def validate(epoch):
             correct += predicted.eq(labels).sum().item()
 
             pbar.set_postfix({
-                'loss': f'{running_loss/(pbar.n):.4f}',
+                'loss': f'{running_loss/batch_idx:.4f}',
                 'acc': f'{100.*correct/total:.2f}%'
             })
 
@@ -238,7 +243,6 @@ def validate(epoch):
 
 
 # Training loop
-import time
 start_time = time.time()
 
 for epoch in range(1, num_epochs + 1):
@@ -295,8 +299,10 @@ ax1.set_title('Loss Over Time')
 ax1.legend()
 ax1.grid(True, alpha=0.3)
 
-ax2.plot(epochs, train_accuracies, 'b-', label='Training Accuracy', linewidth=2)
-ax2.plot(epochs, val_accuracies, 'r-', label='Validation Accuracy', linewidth=2)
+ax2.plot(epochs, train_accuracies, 'b-',
+         label='Training Accuracy', linewidth=2)
+ax2.plot(epochs, val_accuracies, 'r-',
+         label='Validation Accuracy', linewidth=2)
 ax2.set_xlabel('Epoch')
 ax2.set_ylabel('Accuracy (%)')
 ax2.set_title('Accuracy Over Time')
@@ -305,8 +311,9 @@ ax2.grid(True, alpha=0.3)
 ax2.set_ylim([95, 100])
 
 plt.tight_layout()
-plt.savefig('MNIST/visualizations/cnn_training_progress.png', dpi=150, bbox_inches='tight')
-print("    ✓ Saved: MNIST/visualizations/cnn_training_progress.png")
+plt.savefig('visualizations/cnn_training_progress.png',
+            dpi=150, bbox_inches='tight')
+print("    ✓ Saved: visualizations/cnn_training_progress.png")
 
 # Step 7: Visualize learned filters
 print("\n[8] Visualizing learned convolutional filters...")
@@ -331,8 +338,8 @@ for idx in range(32):
     ax.axis('off')
 
 plt.tight_layout()
-plt.savefig('MNIST/visualizations/cnn_filters.png', dpi=150, bbox_inches='tight')
-print("    ✓ Saved: MNIST/visualizations/cnn_filters.png")
+plt.savefig('visualizations/cnn_filters.png', dpi=150, bbox_inches='tight')
+print("    ✓ Saved: visualizations/cnn_filters.png")
 print("    💡 These filters learn to detect edges, corners, and curves!")
 
 # Step 8: Visualize feature maps
@@ -386,14 +393,14 @@ for idx in range(33, 35):
     axes[row, col].axis('off')
 
 plt.tight_layout()
-plt.savefig('MNIST/visualizations/cnn_feature_maps.png', dpi=150, bbox_inches='tight')
-print("    ✓ Saved: MNIST/visualizations/cnn_feature_maps.png")
+plt.savefig('visualizations/cnn_feature_maps.png',
+            dpi=150, bbox_inches='tight')
+print("    ✓ Saved: visualizations/cnn_feature_maps.png")
 print("    💡 Different feature maps detect different patterns!")
 
 # Step 9: Save model
 print("\n[10] Saving model...")
 
-import os
 os.makedirs('MNIST/models', exist_ok=True)
 
 torch.save({
@@ -401,7 +408,7 @@ torch.save({
     'model_state_dict': model.state_dict(),
     'optimizer_state_dict': optimizer.state_dict(),
     'test_accuracy': test_accuracy,
-}, 'MNIST/models/cnn_trained.pth')
+}, 'models/cnn_trained.pth')
 
 print("    ✓ Saved: MNIST/models/cnn_trained.pth")
 
@@ -449,7 +456,7 @@ for idx in range(10):
     ax.axis('off')
 
 plt.tight_layout()
-plt.savefig('MNIST/visualizations/cnn_predictions.png', dpi=150, bbox_inches='tight')
+plt.savefig('visualizations/cnn_predictions.png', dpi=150, bbox_inches='tight')
 print("    ✓ Saved: MNIST/visualizations/cnn_predictions.png")
 
 # Summary
