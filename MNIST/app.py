@@ -30,13 +30,80 @@ class SimpleNN(nn.Module):
         return x
 
 
+class CNN(nn.Module):
+    """Convolutional Neural Network for MNIST digit recognition."""
+
+    def __init__(self):
+        super(CNN, self).__init__()
+
+        # Convolutional layers
+        self.conv1 = nn.Conv2d(
+            in_channels=1,      # Grayscale input
+            out_channels=32,    # 32 different filters/feature maps
+            kernel_size=3,      # 3×3 filter
+            padding=1           # Keep same size after convolution
+        )
+
+        self.conv2 = nn.Conv2d(
+            in_channels=32,     # Input from previous layer
+            out_channels=64,    # 64 different filters
+            kernel_size=3,
+            padding=1
+        )
+
+        # Pooling layer (will be reused)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)  # 2×2 pooling
+
+        # Fully connected layers
+        # After two poolings: 28→14→7, with 64 channels: 7×7×64 = 3,136
+        self.fc1 = nn.Linear(7 * 7 * 64, 128)
+        self.dropout = nn.Dropout(0.5)  # Randomly drop 50% of neurons during training
+        self.fc2 = nn.Linear(128, 10)
+
+    def forward(self, x):
+        # Conv Block 1: Conv → ReLU → Pool
+        x = self.pool(F.relu(self.conv1(x)))  # 28×28×1 → 14×14×32
+
+        # Conv Block 2: Conv → ReLU → Pool
+        x = self.pool(F.relu(self.conv2(x)))  # 14×14×32 → 7×7×64
+
+        # Flatten for fully connected layers
+        x = x.view(-1, 7 * 7 * 64)  # Flatten to (batch_size, 3136)
+
+        # Fully connected layers
+        x = F.relu(self.fc1(x))     # → 128
+        x = self.dropout(x)          # Apply dropout (only active during training)
+        x = self.fc2(x)              # → 10
+
+        return x
+
+
 @st.cache_resource
-def load_model():
+def load_model(model_name):
     """Load the trained model (cached to avoid reloading on every interaction)."""
-    model = SimpleNN()
+    # Model configurations
+    model_configs = {
+        'Simple NN': {
+            'class': SimpleNN,
+            'path': 'models/simple_nn_trained.pth',
+            'architecture': 'SimpleNN (784 → 128 → 10)',
+            'params': 101_770,
+            'description': 'Fully-connected network'
+        },
+        'CNN': {
+            'class': CNN,
+            'path': 'models/cnn_trained.pth',
+            'architecture': 'CNN (Conv2d layers + FC)',
+            'params': 1_199_882,
+            'description': 'Convolutional neural network'
+        }
+    }
+
+    config = model_configs[model_name]
+    model = config['class']()
 
     # Load the trained weights
-    model_path = 'models/simple_nn_trained.pth'
+    model_path = config['path']
     if not os.path.exists(model_path):
         st.error(f"Model file not found at {model_path}. Please train the model first!")
         return None
@@ -45,7 +112,13 @@ def load_model():
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
 
-    return model, checkpoint.get('test_accuracy', 'N/A')
+    return {
+        'model': model,
+        'accuracy': checkpoint.get('test_accuracy', 'N/A'),
+        'architecture': config['architecture'],
+        'params': config['params'],
+        'description': config['description']
+    }
 
 
 def preprocess_image(image_array):
@@ -124,21 +197,33 @@ st.title("🔢 MNIST Digit Recognition")
 st.markdown("""
 Draw a digit (0-9) in the canvas below and click **Predict** to see what the neural network thinks it is!
 
-The model is a simple fully-connected neural network trained on the MNIST dataset.
+Choose between two different neural network architectures and compare their performance.
 """)
 
+# Model selector
+st.markdown("### Select Model")
+col_select1, col_select2 = st.columns([2, 3])
+with col_select1:
+    selected_model = st.selectbox(
+        "Choose a model:",
+        options=['Simple NN', 'CNN'],
+        help="Simple NN: Fast, fully-connected network (~98% accuracy)\nCNN: More advanced, uses convolutional layers (~99% accuracy)"
+    )
+
 # Load the model
-model_info = load_model()
+model_info = load_model(selected_model)
 if model_info is None:
     st.stop()
 
-model, test_accuracy = model_info
+model = model_info['model']
+test_accuracy = model_info['accuracy']
 
 # Display model info
 with st.expander("ℹ️ Model Information"):
-    st.write(f"**Architecture:** SimpleNN (784 → 128 → 10)")
+    st.write(f"**Model:** {selected_model}")
+    st.write(f"**Architecture:** {model_info['architecture']}")
     st.write(f"**Test Accuracy:** {test_accuracy:.2f}%" if isinstance(test_accuracy, float) else f"**Test Accuracy:** {test_accuracy}")
-    st.write(f"**Parameters:** 101,770")
+    st.write(f"**Parameters:** {model_info['params']:,}")
 
 st.markdown("---")
 
