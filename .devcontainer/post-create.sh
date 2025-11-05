@@ -33,6 +33,7 @@ if [ -f "$SECRETS_FILE" ]; then
 
     # Export Azure environment variables
     export AZURE_AI_PROJECT_ENDPOINT
+    export AZURE_OPENAI_ENDPOINT
     export AZURE_TENANT_ID
     export AZURE_CLIENT_ID
     export AZURE_CLIENT_SECRET
@@ -44,6 +45,10 @@ if [ -f "$SECRETS_FILE" ]; then
 
         if [ ! -z "$AZURE_AI_PROJECT_ENDPOINT" ]; then
             echo "export AZURE_AI_PROJECT_ENDPOINT=\"$AZURE_AI_PROJECT_ENDPOINT\"" >> "$profile"
+        fi
+
+        if [ ! -z "$AZURE_OPENAI_ENDPOINT" ]; then
+            echo "export AZURE_OPENAI_ENDPOINT=\"$AZURE_OPENAI_ENDPOINT\"" >> "$profile"
         fi
 
         if [ ! -z "$AZURE_TENANT_ID" ]; then
