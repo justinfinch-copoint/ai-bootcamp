@@ -12,7 +12,7 @@ Separate script to create and persist the vector database using Azure AI Foundry
   - Chunk size: 200 characters
   - Overlap: 40 characters
 - **Embed & Store**: Use Azure AI Foundry SDK for embeddings with ChromaDB vector store
-  - Storage location: `Lesson1/chroma_db/`
+  - Storage location: `RagChat/chroma_db/`
   - Embeddings model: `text-embedding-3-small` (via Azure OpenAI)
   - Azure authentication: DefaultAzureCredential
 
@@ -79,22 +79,26 @@ echo "AZURE_AI_PROJECT_ENDPOINT=https://your-project.services.ai.azure.com/api/p
 export AZURE_AI_PROJECT_ENDPOINT="https://your-project.services.ai.azure.com/api/projects/your-project"
 
 # Build vector database (run once)
-python Lesson1/build_vectordb.py
+python RagChat/build_vectordb.py
 ```
 
 ### Run Chatbot
 ```bash
 # Launch Streamlit app
-streamlit run Lesson1/app.py
+streamlit run RagChat/app.py
 ```
 
 ## File Structure
 ```
-Lesson1/
+RagChat/
 ├── Intro_To_AI_Transcript.pdf    # Source document
 ├── chatbot_plan.md                # This file
 ├── build_vectordb.py              # Vector DB creation script (Azure version)
 ├── app.py                         # Streamlit chatbot UI (Azure version)
+├── agent/                         # Agent module (refactored)
+│   ├── __init__.py                # Exports RAGAgent
+│   ├── config.py                  # Configuration
+│   └── rag_agent.py               # RAGAgent class
 └── chroma_db/                     # Persisted vector database (generated)
 ```
 

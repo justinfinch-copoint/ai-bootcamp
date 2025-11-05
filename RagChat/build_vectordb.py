@@ -5,7 +5,7 @@ This script loads the Intro_To_AI_Transcript.pdf, splits it into chunks,
 creates embeddings using Azure AI Foundry, and stores them in a ChromaDB vector database.
 
 Run this script once to build the vector database:
-    python Lesson1/build_vectordb.py
+    python RagChat/build_vectordb.py
 """
 
 import os
@@ -177,7 +177,7 @@ def build_vector_database():
     print(f"   Collection: {COLLECTION_NAME}")
     print(f"   Total vectors: {len(chunks)}")
     print("\n🎉 Vector database build complete!")
-    print("   You can now run the chatbot with: streamlit run Lesson1/app.py")
+    print("   You can now run the chatbot with: streamlit run RagChat/app.py")
 
 
 if __name__ == "__main__":

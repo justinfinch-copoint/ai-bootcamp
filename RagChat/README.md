@@ -83,10 +83,10 @@ AZURE_CLIENT_SECRET=your_client_secret
 export AZURE_AI_PROJECT_ENDPOINT="https://your-project.services.ai.azure.com/api/projects/your-project"
 ```
 
-Or add it to your Lesson1/.env file:
+Or add it to your RagChat/.env file:
 
 ```bash
-echo "AZURE_AI_PROJECT_ENDPOINT=https://your-project.services.ai.azure.com/api/projects/your-project" > Lesson1/.env
+echo "AZURE_AI_PROJECT_ENDPOINT=https://your-project.services.ai.azure.com/api/projects/your-project" > RagChat/.env
 ```
 
 ### 4. Install Dependencies
@@ -113,14 +113,14 @@ This will install:
 **Run this once** to create the ChromaDB vector database from the PDF:
 
 ```bash
-python Lesson1/build_vectordb.py
+python RagChat/build_vectordb.py
 ```
 
 This will:
 - Load `Intro_To_AI_Transcript.pdf`
 - Split it into 200-character chunks with 40-character overlap
 - Create embeddings using Azure OpenAI via Azure AI Foundry
-- Save the vector database to `Lesson1/chroma_db/`
+- Save the vector database to `RagChat/chroma_db/`
 
 Expected output:
 
@@ -141,7 +141,7 @@ Expected output:
 ### 6. Launch the Chatbot
 
 ```bash
-streamlit run Lesson1/app.py
+streamlit run RagChat/app.py
 ```
 
 The app will open in your browser at `http://localhost:8501`
@@ -195,12 +195,12 @@ az account show
 Run the database build script first:
 
 ```bash
-python Lesson1/build_vectordb.py
+python RagChat/build_vectordb.py
 ```
 
 ### Error: PDF file not found
 
-Make sure `Intro_To_AI_Transcript.pdf` exists in the `Lesson1/` folder.
+Make sure `Intro_To_AI_Transcript.pdf` exists in the `RagChat/` folder.
 
 ### Error: Model deployment not found
 
@@ -208,17 +208,21 @@ Make sure you have the required models deployed in your Azure AI Foundry project
 - `text-embedding-3-small` for embeddings
 - `gpt-35-turbo` for chat completions
 
-You may need to update the model names in `Lesson1/app.py` to match your deployment names.
+You may need to update the model names in `RagChat/app.py` to match your deployment names.
 
 ## Project Structure
 
 ```
-Lesson1/
+RagChat/
 ├── Intro_To_AI_Transcript.pdf    # Source document
 ├── README.md                      # This file
 ├── chatbot_plan.md                # Implementation plan
 ├── build_vectordb.py              # Vector DB creation script (Azure version)
 ├── app.py                         # Streamlit chatbot UI (Azure version)
+├── agent/                         # Agent module (refactored)
+│   ├── __init__.py                # Exports RAGAgent
+│   ├── config.py                  # Configuration
+│   └── rag_agent.py               # RAGAgent class
 └── chroma_db/                     # Persisted vector database (generated)
 ```
 
